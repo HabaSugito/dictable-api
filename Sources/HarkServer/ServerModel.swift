@@ -33,8 +33,14 @@ final class ServerModel {
   private(set) var launchAtLogin = SMAppService.mainApp.status == .enabled
 
   var portText: String
+  /// Validation message for the port field.
+  private(set) var portError: String?
+  /// A free port offered when the configured one is taken.
+  private(set) var suggestedPort: UInt16?
+  private(set) var loginItemError: String?
 
   private var server: HarkServer?
+  private var generation = UUID()
   private static let portKey = "port"
   static let defaultPort: UInt16 = 8082
 
@@ -56,9 +62,24 @@ final class ServerModel {
 
   func start() {
     stop()
+    portError = nil
+    // Check first, so a clash with another app gets a clear message and a free alternative.
+    guard PortProbe.isAvailable(port) else {
+      suggestedPort = PortProbe.firstAvailable(after: port)
+      status = .failed("Port \(port) is already used by another app.")
+      log(.error, "Port \(port) is already in use")
+      return
+    }
+    suggestedPort = nil
     status = .starting
+    // Events from a previous server (e.g. its late "stopped") must not overwrite the new state.
+    let generation = UUID()
+    self.generation = generation
     let server = HarkServer(port: port) { [weak self] event in
-      Task { @MainActor in self?.handle(event) }
+      Task { @MainActor in
+        guard let self, self.generation == generation else { return }
+        self.handle(event)
+      }
     }
     do {
       try server.start()
@@ -69,6 +90,7 @@ final class ServerModel {
   }
 
   func stop() {
+    generation = UUID()  // ignore anything the old server still reports
     server?.stop()
     server = nil
     activeStreams.removeAll()
@@ -80,18 +102,39 @@ final class ServerModel {
     isRunning ? stop() : start()
   }
 
-  /// Saves the port typed in the settings field and restarts the server.
+  /// Saves the port typed in the port field and restarts the server.
   func applyPort() {
-    guard let value = UInt16(portText.trimmingCharacters(in: .whitespaces)), value >= 1024 else {
-      portText = String(port)
-      log(.error, "Port must be a number between 1024 and 65535.")
+    guard let value = PortProbe.parse(portText) else {
+      portError = "Enter a number between 1024 and 65535."
       return
     }
+    // The current port is "in use" by Hark itself, so only check other ports.
+    if value != port || !isRunning {
+      guard PortProbe.isAvailable(value) || (value == port && isRunning) else {
+        portError = "Port \(value) is in use. Try \(PortProbe.firstAvailable(after: value).map(String.init) ?? "another port")."
+        return
+      }
+    }
+    usePort(value)
+  }
+
+  /// Switches to `value`, saves it, and restarts the server.
+  func usePort(_ value: UInt16) {
     UserDefaults.standard.set(Int(value), forKey: Self.portKey)
+    portText = String(value)
+    portError = nil
+    log(.info, "Port changed to \(value). Update your clients (e.g. the Chrome extension) to the new URL.")
     start()
   }
 
+  func resetPortText() {
+    portText = String(port)
+    portError = nil
+  }
+
+  /// Registers/unregisters the app as a login item (System Settings → General → Login Items).
   func setLaunchAtLogin(_ enabled: Bool) {
+    loginItemError = nil
     do {
       if enabled {
         try SMAppService.mainApp.register()
@@ -99,9 +142,14 @@ final class ServerModel {
         try SMAppService.mainApp.unregister()
       }
     } catch {
-      log(.error, "Launch at login: \(error.localizedDescription)")
+      loginItemError = "Could not change the login item: \(error.localizedDescription)"
     }
-    launchAtLogin = SMAppService.mainApp.status == .enabled
+    let status = SMAppService.mainApp.status
+    launchAtLogin = status == .enabled
+    if enabled && status == .requiresApproval {
+      loginItemError = "Allow Hark Server in System Settings → General → Login Items."
+      SMAppService.openSystemSettingsLoginItems()
+    }
   }
 
   func copy(_ string: String) {
@@ -118,6 +166,9 @@ final class ServerModel {
     case .started(let port):
       status = .running
       log(.info, "Listening on 127.0.0.1:\(port)")
+    case .waitingForPort(let port):
+      status = .starting
+      log(.info, "Port \(port) was just released by another app. Waiting for macOS to free it…")
     case .stopped:
       if case .failed = status { return }
       status = .stopped

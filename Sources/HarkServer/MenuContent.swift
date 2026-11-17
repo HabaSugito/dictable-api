@@ -8,12 +8,9 @@ struct MenuContent: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       header
+      if case .failed(let message) = model.status { failure(message) }
       if model.isRunning { endpoints }
-      if case .failed(let message) = model.status {
-        Label(message, systemImage: "exclamationmark.triangle.fill")
-          .font(.callout)
-          .foregroundStyle(.red)
-      }
+      portRow
       stats
       Divider()
       activityList
@@ -55,6 +52,62 @@ struct MenuContent: View {
     }
   }
 
+  private func failure(_ message: String) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label(message, systemImage: "exclamationmark.triangle.fill")
+        .font(.callout)
+        .foregroundStyle(.red)
+        .fixedSize(horizontal: false, vertical: true)
+      if let suggested = model.suggestedPort {
+        Button("Use port \(String(suggested)) instead") { model.usePort(suggested) }
+          .buttonStyle(.borderedProminent)
+          .controlSize(.small)
+      }
+    }
+    .padding(10)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .background(.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+  }
+
+  /// The port can collide with other local servers, so it is always one click away.
+  private var portRow: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      HStack(spacing: 6) {
+        Text("Port").font(.callout)
+        TextField("8082", text: $model.portText)
+          .textFieldStyle(.roundedBorder)
+          .frame(width: 72)
+          .multilineTextAlignment(.trailing)
+          .onSubmit { model.applyPort() }
+        if model.portText != String(model.port) {
+          Button("Apply") { model.applyPort() }
+            .controlSize(.small)
+            .keyboardShortcut(.defaultAction)
+          Button("Cancel") { model.resetPortText() }
+            .controlSize(.small)
+        }
+        Spacer()
+      }
+      Toggle(
+        "Start Hark Server automatically when I log in",
+        isOn: Binding(get: { model.launchAtLogin }, set: { model.setLaunchAtLogin($0) })
+      )
+      .toggleStyle(.checkbox)
+      .font(.callout)
+      if let error = model.loginItemError {
+        Text(error).font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+      }
+      if let error = model.portError {
+        Text(error).font(.caption).foregroundStyle(.red)
+      } else if model.portText != String(model.port) {
+        Text("Clients must switch to the new port too (e.g. the Chrome extension's server URL).")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+    }
+  }
+
   private var stats: some View {
     HStack(spacing: 0) {
       Stat(value: "\(model.activeStreams.count)", label: "live streams")
@@ -87,19 +140,6 @@ struct MenuContent: View {
 
   private var settings: some View {
     VStack(alignment: .leading, spacing: 10) {
-      HStack {
-        Text("Port")
-        Spacer()
-        TextField("8082", text: $model.portText)
-          .frame(width: 70)
-          .multilineTextAlignment(.trailing)
-          .onSubmit { model.applyPort() }
-        Button("Apply") { model.applyPort() }
-          .controlSize(.small)
-      }
-      Toggle(
-        "Launch at login",
-        isOn: Binding(get: { model.launchAtLogin }, set: { model.setLaunchAtLogin($0) }))
       VStack(alignment: .leading, spacing: 4) {
         Text("Installed speech models").font(.caption).foregroundStyle(.secondary)
         Text(model.installedLocales.isEmpty ? "None yet — downloaded on first use." : model.installedLocales.joined(separator: ", "))

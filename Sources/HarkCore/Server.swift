@@ -1,7 +1,7 @@
 import Foundation
 @preconcurrency import Network
 
-public let harkVersion = "1.0.0"
+public let harkVersion = "1.1.0"
 
 /// Seconds rounded to milliseconds, so JSON shows 21.54 rather than 21.539999999999999.
 func roundMs(_ seconds: Double) -> Double {
@@ -16,6 +16,8 @@ public enum ServerEvent: Sendable {
   }
 
   case started(port: UInt16)
+  /// The port was just released by another program; the server retries until macOS frees it (≤ ~30 s).
+  case waitingForPort(port: UInt16)
   case stopped
   case failed(String)
   case streamOpened(id: UUID, client: String)
@@ -43,10 +45,23 @@ public final class HarkServer: @unchecked Sendable {
     self.onEvent = onEvent
   }
 
+  private let listenerQueue = DispatchQueue(label: "hark.listener")
+  private var stopped = false
+  private var bindAttempts = 0
+  /// macOS keeps a just-closed port in TIME_WAIT for up to ~30 s; retry for a bit longer than that.
+  static let maxBindAttempts = 25
+  static let bindRetryDelay: TimeInterval = 1.5
+
   public func start() throws {
-    guard let nwPort = NWEndpoint.Port(rawValue: port) else { throw HTTPError.malformed("invalid port") }
+    guard NWEndpoint.Port(rawValue: port) != nil else { throw HTTPError.malformed("invalid port") }
+    stopped = false
+    bindAttempts = 0
+    try startListener()
+  }
+
+  private func startListener() throws {
     let parameters = NWParameters.tcp
-    parameters.requiredLocalEndpoint = .hostPort(host: "127.0.0.1", port: nwPort)
+    parameters.requiredLocalEndpoint = .hostPort(host: "127.0.0.1", port: NWEndpoint.Port(rawValue: port)!)
     parameters.allowLocalEndpointReuse = true
     let listener = try NWListener(using: parameters)
     listener.newConnectionHandler = { [weak self] connection in
@@ -55,22 +70,53 @@ public final class HarkServer: @unchecked Sendable {
       self.lock.withLock { self.connections[ObjectIdentifier(client)] = client }
       client.start()
     }
-    listener.stateUpdateHandler = { [weak self] state in
+    listener.stateUpdateHandler = { [weak self, weak listener] state in
       guard let self else { return }
       switch state {
-      case .ready: self.onEvent(.started(port: self.port))
-      case .failed(let error): self.onEvent(.failed(Self.describe(error, port: self.port)))
-      case .cancelled: self.onEvent(.stopped)
-      default: break
+      case .ready:
+        self.onEvent(.started(port: self.port))
+      case .failed(let error):
+        listener?.cancel()
+        self.handleFailure(error)
+      case .cancelled:
+        if self.stopped { self.onEvent(.stopped) }
+      default:
+        break
       }
     }
-    self.listener = listener
-    listener.start(queue: DispatchQueue(label: "hark.listener"))
+    lock.withLock { self.listener = listener }
+    listener.start(queue: listenerQueue)
+  }
+
+  /// "Address in use" while no one is actually listening means the port was just released and still has
+  /// connections in TIME_WAIT. Network.framework refuses to bind then, so wait and try again.
+  private func handleFailure(_ error: NWError) {
+    let inUse: Bool
+    if case .posix(let code) = error, code == .EADDRINUSE { inUse = true } else { inUse = false }
+    if inUse, !stopped, bindAttempts < Self.maxBindAttempts, PortProbe.isAvailable(port) {
+      bindAttempts += 1
+      if bindAttempts == 1 { onEvent(.waitingForPort(port: port)) }
+      listenerQueue.asyncAfter(deadline: .now() + Self.bindRetryDelay) { [weak self] in
+        guard let self, !self.stopped else { return }
+        do {
+          try self.startListener()
+        } catch {
+          self.onEvent(.failed(error.localizedDescription))
+        }
+      }
+      return
+    }
+    onEvent(.failed(Self.describe(error, port: port)))
   }
 
   public func stop() {
+    stopped = true
+    let listener = lock.withLock { () -> NWListener? in
+      defer { self.listener = nil }
+      return self.listener
+    }
     listener?.cancel()
-    listener = nil
+    if listener == nil { onEvent(.stopped) }
     let clients = lock.withLock { Array(connections.values) }
     clients.forEach { $0.close() }
   }

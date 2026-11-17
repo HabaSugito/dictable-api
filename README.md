@@ -47,7 +47,15 @@ cd hark-server
 open "build/Hark Server.app"
 ```
 
-A waveform icon appears in the menu bar. Click it to see the endpoints, live activity, and settings (port, launch at login).
+A waveform icon appears in the menu bar. Click it to see the endpoints and live activity, change the port, and turn on **Start Hark Server automatically when I log in**. For that option, keep the app in /Applications so the login item keeps pointing at it.
+
+### Changing the port
+
+The default port is `8082`. If another app already uses it, Hark Server does not start on it. The menu shows the clash and offers the next free port, which you can accept with **Use port 8083 instead**. You can also type any port from 1024 to 65535 in the **Port** field. Remember to point your clients at the new port too.
+
+If you switch back to a port that another app has just released, macOS may hold it for up to about 30 seconds. Hark Server shows that it is waiting and starts on its own when the port is free.
+
+From the command line: `defaults write io.github.habasugito.HarkServer port -int 9000`, then restart the app.
 
 ## HTTP API (OpenAI-compatible)
 

@@ -136,6 +136,90 @@ struct AccessPolicyTests {
   }
 }
 
+@Suite("Port probe")
+struct PortProbeTests {
+  /// Occupies a port the way another app would (listening on 127.0.0.1).
+  func occupy() throws -> (fd: Int32, port: UInt16) {
+    let fd = socket(AF_INET, SOCK_STREAM, 0)
+    var addr = sockaddr_in()
+    addr.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+    addr.sin_family = sa_family_t(AF_INET)
+    addr.sin_port = 0  // let the OS pick
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1")
+    _ = withUnsafePointer(to: &addr) {
+      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { bind(fd, $0, socklen_t(MemoryLayout<sockaddr_in>.size)) }
+    }
+    listen(fd, 1)
+    var bound = sockaddr_in()
+    var len = socklen_t(MemoryLayout<sockaddr_in>.size)
+    _ = withUnsafeMutablePointer(to: &bound) {
+      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { getsockname(fd, $0, &len) }
+    }
+    return (fd, UInt16(bigEndian: bound.sin_port))
+  }
+
+  @Test func detectsPortInUseAndSuggestsAnother() throws {
+    let (fd, port) = try occupy()
+    defer { close(fd) }
+    #expect(!PortProbe.isAvailable(port))
+    let next = try #require(PortProbe.firstAvailable(after: port))
+    #expect(next != port)
+    #expect(PortProbe.isAvailable(next))
+  }
+
+  @Test func freedPortIsAvailableAgain() throws {
+    let (fd, port) = try occupy()
+    close(fd)
+    #expect(PortProbe.isAvailable(port))
+  }
+
+  @Test func portWithRecentConnectionsIsAvailableAfterServerQuits() throws {
+    // A connection that was accepted and closed leaves TIME_WAIT behind; that must not block a restart.
+    let (fd, port) = try occupy()
+    let client = socket(AF_INET, SOCK_STREAM, 0)
+    var addr = sockaddr_in()
+    addr.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+    addr.sin_family = sa_family_t(AF_INET)
+    addr.sin_port = port.bigEndian
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1")
+    _ = withUnsafePointer(to: &addr) {
+      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(client, $0, socklen_t(MemoryLayout<sockaddr_in>.size)) }
+    }
+    let accepted = accept(fd, nil, nil)
+    close(accepted)  // server closes first → TIME_WAIT on the server's port
+    close(client)
+    close(fd)
+    #expect(PortProbe.isAvailable(port))
+  }
+
+  @Test func detectsWildcardListener() throws {
+    let fd = socket(AF_INET, SOCK_STREAM, 0)
+    defer { close(fd) }
+    var addr = sockaddr_in()
+    addr.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+    addr.sin_family = sa_family_t(AF_INET)
+    addr.sin_port = 0
+    addr.sin_addr.s_addr = INADDR_ANY
+    _ = withUnsafePointer(to: &addr) {
+      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { bind(fd, $0, socklen_t(MemoryLayout<sockaddr_in>.size)) }
+    }
+    listen(fd, 1)
+    var bound = sockaddr_in()
+    var len = socklen_t(MemoryLayout<sockaddr_in>.size)
+    _ = withUnsafeMutablePointer(to: &bound) {
+      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { getsockname(fd, $0, &len) }
+    }
+    #expect(!PortProbe.isAvailable(UInt16(bigEndian: bound.sin_port)))
+  }
+
+  @Test func parsesUserInput() {
+    #expect(PortProbe.parse(" 8083 ") == 8083)
+    #expect(PortProbe.parse("80") == nil)  // privileged
+    #expect(PortProbe.parse("70000") == nil)
+    #expect(PortProbe.parse("abc") == nil)
+  }
+}
+
 @Suite("Output formats")
 struct OutputFormatTests {
   let segments = [
