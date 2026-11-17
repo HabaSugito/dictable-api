@@ -3,7 +3,7 @@
 **macOS 標準のオンデバイス音声認識を、ローカル API として使えるようにするメニューバーアプリです。**
 OpenAI 互換の HTTP API でのファイル文字起こしと、WebSocket での逐次文字起こしに対応しています。無料・オフラインで動き、音声は Mac の外に出ません。
 
-[English README](README.md)
+**Web サイト:** https://hark-server.living-with-tree.workers.dev · [English README](README.md)
 
 ## 特長
 
@@ -22,7 +22,7 @@ MacBook Air（M シリーズ、メモリ 16GB）で 24 秒の英語音声を試�
 ## インストール
 
 [Releases](../../releases) から `HarkServer-x.y.z.zip` をダウンロードして展開し、**Hark Server.app** をアプリケーションフォルダに移します。
-アドホック署名なので、初回は右クリック →「開く」で起動してください。
+Apple の公証を受けていないため、初回の起動は macOS に止められます。**システム設定 → プライバシーとセキュリティ** で **このまま開く** を一度押してください。ソースから自分でビルドした場合は止められません。
 
 ソースからビルドする場合:
 

@@ -3,7 +3,7 @@
 **A menu bar app that turns macOS's on-device speech recognition into a local API.**
 OpenAI-compatible file transcription over HTTP, plus live streaming transcription over WebSocket. Free, offline, and private: audio never leaves your Mac.
 
-[日本語版 README](README.ja.md)
+**Website:** https://hark-server.living-with-tree.workers.dev · [日本語版 README](README.ja.md)
 
 ```
 ┌──────────────┐  POST /v1/audio/transcriptions   ┌───────────────────────────┐
@@ -36,7 +36,7 @@ Measured on a MacBook Air (M-series, 16 GB) with a 24-second English clip: the w
 ## Install
 
 Download `HarkServer-x.y.z.zip` from [Releases](../../releases), unzip, and move **Hark Server.app** to Applications.
-It is ad-hoc signed, so the first time you open it, right-click the app → **Open**.
+It is ad-hoc signed, not notarized, so macOS blocks the first launch. Open **System Settings → Privacy & Security** and click **Open Anyway** (once). Building from source avoids this.
 
 Or build it yourself:
 
@@ -142,6 +142,7 @@ Sources/HarkCore/        UI-free library, unit tested
 Sources/HarkServer/      SwiftUI MenuBarExtra app
 Tests/HarkCoreTests/     Swift Testing suites for the parsers and policies
 scripts/build-app.sh     Builds and zips the .app bundle
+site/                    Landing page, deployed to Cloudflare with `npx wrangler deploy`
 ```
 
 ```bash
