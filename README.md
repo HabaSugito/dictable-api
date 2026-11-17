@@ -5,6 +5,8 @@ OpenAI-compatible file transcription over HTTP, plus live streaming transcriptio
 
 **Website:** https://dictable.dev
 
+> **Free.** Dictable API is free to download and use, with no account, no API key, and no usage limits. Recognition runs on your Mac, so there are no per-minute charges like a cloud API. MIT-licensed, so it can be used in commercial projects too.
+
 ```
 ┌──────────────┐  POST /v1/audio/transcriptions   ┌───────────────────────────┐
 │ OpenAI SDK,  │ ───────────────────────────────▶ │        Dictable API        │

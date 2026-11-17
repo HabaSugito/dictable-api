@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dictable API — on-device speech recognition as a local API</title>
-  <meta name="description" content="A macOS menu bar app that serves Apple's on-device speech model over an OpenAI-compatible HTTP API and live WebSocket streaming. Free, offline, private." />
+  <meta name="description" content="Free macOS menu bar app that serves Apple's on-device speech model over an OpenAI-compatible HTTP API and live WebSocket streaming. Free, offline, private." />
   <meta property="og:title" content="Dictable API" />
   <meta property="og:description" content="On-device speech recognition for macOS, as an OpenAI-compatible local API with live streaming." />
   <meta property="og:type" content="website" />
@@ -319,8 +319,8 @@
       <div class="wrap hero-grid">
         <div>
           <span class="eyebrow"><span class="dot"></span>
-            <span lang="en">Open source · macOS 26 · Apple silicon</span>
-            <span lang="ja">オープンソース・macOS 26・Apple シリコン</span>
+            <span lang="en"><b>Free</b> · Open source · macOS 26 · Apple silicon</span>
+            <span lang="ja"><b>無料</b>・オープンソース・macOS 26・Apple シリコン</span>
           </span>
           <h1>
             <span lang="en">Your Mac's speech recognition, <span class="grad">as a local API.</span></span>
@@ -346,9 +346,11 @@
             </a>
           </div>
           <div class="meta">
+            <span lang="en"><b>Free forever</b></span><span lang="ja"><b>ずっと無料</b></span>
+            <span>·</span>
             <span lang="en">MIT license</span><span lang="ja">MIT ライセンス</span>
             <span>·</span>
-            <span lang="en">No API key, no GPU, no bill</span><span lang="ja">API キー・GPU・料金 不要</span>
+            <span lang="en">No account, no API key, no usage limits</span><span lang="ja">登録・API キー・利用制限なし</span>
             <span>·</span>
             <span lang="en">Zero dependencies</span><span lang="ja">外部ライブラリなし</span>
           </div>
@@ -673,6 +675,10 @@ ws.onmessage = ({ data }) =&gt; {
         <div class="kicker">FAQ</div>
         <h2><span lang="en">Questions</span><span lang="ja">よくある質問</span></h2>
         <div class="faq">
+          <details open>
+            <summary><span lang="en">Is it really free?</span><span lang="ja">本当に無料ですか？</span></summary>
+            <p><span lang="en">Yes. Dictable API is free to download and use, with no account, no API key, and no usage limits. Recognition runs on your Mac with the speech model built into macOS, so there is no per-minute cost like a cloud API. The source code is MIT-licensed, so you can also use it in commercial projects.</span><span lang="ja">はい。ダウンロードも利用も無料で、登録・API キー・利用回数の制限もありません。認識は macOS に入っている音声モデルを使って Mac の中で行うので、クラウドの API のように使った時間に応じた料金もかかりません。ソースコードは MIT ライセンスなので、商用のプロジェクトにも使えます。</span></p>
+          </details>
           <details>
             <summary><span lang="en">Does any audio leave my Mac?</span><span lang="ja">音声が Mac の外に送られることはありますか？</span></summary>
             <p><span lang="en">No. Recognition uses the on-device model, and the server only listens on 127.0.0.1. The only network traffic is macOS downloading a language model the first time you use that language.</span><span lang="ja">ありません。認識は Mac 内のモデルで行い、サーバーは 127.0.0.1 でしか待ち受けません。通信が発生するのは、ある言語を初めて使うときに macOS がモデルをダウンロードする場合だけです。</span></p>
@@ -702,8 +708,8 @@ ws.onmessage = ({ data }) =&gt; {
       <div class="wrap">
         <h2><span lang="en">Give your tools ears.</span><span lang="ja">あなたのツールに「耳」を。</span></h2>
         <p class="sub" style="margin-left:auto;margin-right:auto">
-          <span lang="en">Free and open source under the MIT license.</span>
-          <span lang="ja">MIT ライセンスの無料オープンソースです。</span>
+          <span lang="en">Free to download and free to use, with no account and no per-minute charges. Open source under the MIT license.</span>
+          <span lang="ja">ダウンロードも利用も無料です。登録も、使った分の料金もありません。MIT ライセンスのオープンソースです。</span>
         </p>
         <div class="cta">
           <a class="btn btn-primary js-download" href="https://github.com/HabaSugito/dictable-api/releases/latest">
