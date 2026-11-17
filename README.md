@@ -3,7 +3,7 @@
 **A menu bar app that turns macOS's on-device speech recognition into a local API.**
 OpenAI-compatible file transcription over HTTP, plus live streaming transcription over WebSocket. Free, offline, and private: audio never leaves your Mac.
 
-**Website:** https://dictable-api.living-with-tree.workers.dev
+**Website:** https://dictable.dev
 
 ```
 ┌──────────────┐  POST /v1/audio/transcriptions   ┌───────────────────────────┐
@@ -142,7 +142,7 @@ Sources/DictableCore/        UI-free library, unit tested
 Sources/DictableAPI/      SwiftUI MenuBarExtra app
 Tests/DictableCoreTests/     Swift Testing suites for the parsers and policies
 scripts/build-app.sh     Builds and zips the .app bundle
-site/                    Landing page, deployed to Cloudflare with `npx wrangler deploy`
+site/, worker/           Landing page for https://dictable.dev (Cloudflare Workers): `npx wrangler deploy`
 ```
 
 ```bash
