@@ -28,6 +28,32 @@ Dictable API exposes it to every language and tool you already use:
 
 Measured on a MacBook Air (M-series, 16 GB) with a 24-second English clip: the whole file transcribes in about 1.4 s. In streaming mode, the first words appear about 1 s after speech starts, and each sentence is final about 0.2 s after it ends.
 
+## Use cases
+
+### Real-time translation
+
+Caption a video call, webinar, or YouTube video in another language as people speak.
+
+```
+tab / mic audio → Dictable API (WebSocket) → translation model → live subtitles
+```
+
+- Show `partial` text while people talk, then replace it with the translation when each `final` sentence arrives. Sentences are final about 0.2 s after they end, so subtitles follow the speaker closely.
+- Pair it with a local translation model (for example PLaMo Translate on llama.cpp) to keep the whole pipeline offline.
+- Browser extensions can connect directly, because extension origins are allowed by default (see [Security](#security)).
+
+### Meeting notes and minutes
+
+Turn meetings, interviews, and lectures into transcripts, then summarize them into minutes, without sending confidential audio to a cloud service.
+
+```
+recording or live audio → Dictable API (HTTP or WebSocket) → summarizing LLM → minutes
+```
+
+- `response_format=verbose_json` returns sentence-level timestamps, so the minutes can link back to the moment each point was made.
+- `srt` / `vtt` output adds captions to the meeting recording.
+- It uses the OpenAI SDK, so existing transcription and summarization code works by changing `base_url`.
+
 ## Requirements
 
 - macOS 26 (Tahoe) or later on Apple silicon

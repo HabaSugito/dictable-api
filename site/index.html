@@ -171,6 +171,20 @@
 
     /* features */
     .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    /* use cases */
+    .uses { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .use { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; display: flex; flex-direction: column; }
+    .use h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: -0.015em; display: flex; align-items: center; gap: 10px; }
+    .use h3 .icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none;
+      background: color-mix(in srgb, var(--accent-2) 14%, transparent); color: var(--accent-2); }
+    .use h3 .icon svg { width: 18px; height: 18px; }
+    .use > p { margin: 0 0 18px; color: var(--muted); font-size: 15px; }
+    .pipeline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 16px; font-size: 12.5px; }
+    .pipeline span.chip { border: 1px solid var(--border); background: var(--bg-alt); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+    .pipeline span.chip.me { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); color: var(--accent); font-weight: 600; }
+    .pipeline i { color: var(--faint); font-style: normal; }
+    .use ul { margin: auto 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
+    .use li + li { margin-top: 4px; }
     .feature { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
     .feature .icon {
       width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px;
@@ -256,6 +270,7 @@
       .hero { padding: 56px 0 48px; }
       .hero-grid, .code-grid { grid-template-columns: 1fr; gap: 36px; }
       .features, .steps { grid-template-columns: 1fr 1fr; }
+      .uses { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
       .flow { grid-template-columns: 1fr; }
       .arrow svg { transform: rotate(90deg); margin: 18px auto 14px; }
@@ -285,6 +300,7 @@
       </a>
       <nav class="nav-links" aria-label="Sections">
         <a href="#features"><span lang="en">Features</span><span lang="ja">特長</span></a>
+        <a href="#use-cases"><span lang="en">Use cases</span><span lang="ja">利用例</span></a>
         <a href="#code"><span lang="en">Usage</span><span lang="ja">使い方</span></a>
         <a href="#api">API</a>
         <a href="#install"><span lang="en">Install</span><span lang="ja">インストール</span></a>
@@ -421,8 +437,67 @@
       </div>
     </section>
 
+    <!-- ================= USE CASES ================= -->
+    <section id="use-cases" class="alt">
+      <div class="wrap">
+        <div class="kicker">USE CASES</div>
+        <h2>
+          <span lang="en">What you can build with it</span>
+          <span lang="ja">こんなアプリが作れます</span>
+        </h2>
+        <p class="sub">
+          <span lang="en">Dictable API handles the hard part, turning speech into text fast and on-device, so your app can focus on what to do with the words.</span>
+          <span lang="ja">音声を速く、Mac の中だけで文字にする部分は Dictable API が受け持ちます。アプリは、その文字をどう使うかに集中できます。</span>
+        </p>
+        <div class="uses">
+          <article class="use">
+            <h3>
+              <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span>
+              <span lang="en">Real-time translation</span><span lang="ja">リアルタイム翻訳</span>
+            </h3>
+            <p>
+              <span lang="en">Caption a video call, webinar, or YouTube video in another language as people speak. Each sentence is final about 0.2 s after it ends, so translations follow the speaker closely.</span>
+              <span lang="ja">ビデオ会議・ウェビナー・YouTube の音声を、話しているそばから別の言語の字幕にできます。文が終わってから約 0.2 秒で確定するので、訳も話し手にぴったりついていきます。</span>
+            </p>
+            <div class="pipeline" aria-label="Pipeline">
+              <span class="chip"><span lang="en">Tab / mic audio</span><span lang="ja">タブ・マイクの音声</span></span><i>→</i>
+              <span class="chip me">Dictable API <span style="opacity:.7">ws</span></span><i>→</i>
+              <span class="chip"><span lang="en">Translation model</span><span lang="ja">翻訳モデル</span></span><i>→</i>
+              <span class="chip"><span lang="en">Live subtitles</span><span lang="ja">字幕</span></span>
+            </div>
+            <ul>
+              <li><span lang="en">Show partial text while people talk, then swap in the translation per sentence.</span><span lang="ja">話している途中の文字を先に出し、文ごとに訳へ差し替える。</span></li>
+              <li><span lang="en">Pair it with a local translation model (e.g. PLaMo Translate via llama.cpp) to stay fully offline.</span><span lang="ja">ローカルの翻訳モデル（例: llama.cpp で動かす PLaMo Translate）と組み合わせれば、すべてオフラインで完結。</span></li>
+              <li><span lang="en">Browser extensions can connect directly: extension origins are allowed by default.</span><span lang="ja">ブラウザ拡張から直接つなげられます（拡張機能からの接続は最初から許可）。</span></li>
+            </ul>
+          </article>
+          <article class="use">
+            <h3>
+              <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></span>
+              <span lang="en">Meeting notes and minutes</span><span lang="ja">議事録アプリ</span>
+            </h3>
+            <p>
+              <span lang="en">Turn meetings, interviews, and lectures into timestamped transcripts, then summarize them into minutes, without sending confidential audio to a cloud service.</span>
+              <span lang="ja">会議・インタビュー・講義を時刻付きの文字起こしにし、要約して議事録にできます。社外秘の音声をクラウドに送る必要はありません。</span>
+            </p>
+            <div class="pipeline" aria-label="Pipeline">
+              <span class="chip"><span lang="en">Recording or live audio</span><span lang="ja">録音・ライブ音声</span></span><i>→</i>
+              <span class="chip me">Dictable API <span style="opacity:.7">http / ws</span></span><i>→</i>
+              <span class="chip"><span lang="en">Summarizing LLM</span><span lang="ja">要約用の LLM</span></span><i>→</i>
+              <span class="chip"><span lang="en">Minutes</span><span lang="ja">議事録</span></span>
+            </div>
+            <ul>
+              <li><span lang="en"><code>verbose_json</code> gives sentence timestamps for jumping back to any moment.</span><span lang="ja"><code>verbose_json</code> で文ごとの時刻が取れるので、どの発言にもすぐ戻れる。</span></li>
+              <li><span lang="en">Export <code>srt</code> / <code>vtt</code> to attach captions to the recording.</span><span lang="ja"><code>srt</code>・<code>vtt</code> で書き出せば、録画にそのまま字幕を付けられる。</span></li>
+              <li><span lang="en">Uses the OpenAI SDK you already know, so existing summarization code drops right in.</span><span lang="ja">使い慣れた OpenAI SDK のままなので、既存の要約処理にそのまま組み込める。</span></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- ================= CODE ================= -->
-    <section id="code" class="alt">
+    <section id="code">
       <div class="wrap code-grid">
         <div>
           <div class="kicker">USAGE</div>
@@ -496,7 +571,7 @@ ws.onmessage = ({ data }) =&gt; {
     </section>
 
     <!-- ================= HOW IT WORKS ================= -->
-    <section>
+    <section class="alt">
       <div class="wrap">
         <div class="kicker">ARCHITECTURE</div>
         <h2><span lang="en">How it works</span><span lang="ja">仕組み</span></h2>
@@ -543,7 +618,7 @@ ws.onmessage = ({ data }) =&gt; {
     </section>
 
     <!-- ================= API ================= -->
-    <section id="api" class="alt">
+    <section id="api">
       <div class="wrap">
         <div class="kicker">API</div>
         <h2><span lang="en">Small, documented surface</span><span lang="ja">小さく、わかりやすい API</span></h2>
@@ -567,7 +642,7 @@ ws.onmessage = ({ data }) =&gt; {
     </section>
 
     <!-- ================= INSTALL ================= -->
-    <section id="install">
+    <section id="install" class="alt">
       <div class="wrap">
         <div class="kicker">INSTALL</div>
         <h2><span lang="en">Running in a minute</span><span lang="ja">1 分で動かせます</span></h2>
@@ -593,7 +668,7 @@ ws.onmessage = ({ data }) =&gt; {
     </section>
 
     <!-- ================= FAQ ================= -->
-    <section class="alt">
+    <section>
       <div class="wrap">
         <div class="kicker">FAQ</div>
         <h2><span lang="en">Questions</span><span lang="ja">よくある質問</span></h2>
@@ -623,7 +698,7 @@ ws.onmessage = ({ data }) =&gt; {
     </section>
 
     <!-- ================= FINAL CTA ================= -->
-    <section class="final">
+    <section class="final alt">
       <div class="wrap">
         <h2><span lang="en">Give your tools ears.</span><span lang="ja">あなたのツールに「耳」を。</span></h2>
         <p class="sub" style="margin-left:auto;margin-right:auto">
