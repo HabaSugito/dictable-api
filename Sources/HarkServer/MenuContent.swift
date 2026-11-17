@@ -10,7 +10,6 @@ struct MenuContent: View {
       header
       if case .failed(let message) = model.status { failure(message) }
       if model.isRunning { endpoints }
-      portRow
       stats
       Divider()
       activityList
@@ -58,54 +57,18 @@ struct MenuContent: View {
         .font(.callout)
         .foregroundStyle(.red)
         .fixedSize(horizontal: false, vertical: true)
-      if let suggested = model.suggestedPort {
-        Button("Use port \(String(suggested)) instead") { model.usePort(suggested) }
-          .buttonStyle(.borderedProminent)
-          .controlSize(.small)
+      HStack {
+        if let suggested = model.suggestedPort {
+          Button("Use port \(String(suggested)) instead") { model.usePort(suggested) }
+            .buttonStyle(.borderedProminent)
+        }
+        Button("Choose a port…") { showSettings = true }
       }
+      .controlSize(.small)
     }
     .padding(10)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
-  }
-
-  /// The port can collide with other local servers, so it is always one click away.
-  private var portRow: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      HStack(spacing: 6) {
-        Text("Port").font(.callout)
-        TextField("8082", text: $model.portText)
-          .textFieldStyle(.roundedBorder)
-          .frame(width: 72)
-          .multilineTextAlignment(.trailing)
-          .onSubmit { model.applyPort() }
-        if model.portText != String(model.port) {
-          Button("Apply") { model.applyPort() }
-            .controlSize(.small)
-            .keyboardShortcut(.defaultAction)
-          Button("Cancel") { model.resetPortText() }
-            .controlSize(.small)
-        }
-        Spacer()
-      }
-      Toggle(
-        "Start Hark Server automatically when I log in",
-        isOn: Binding(get: { model.launchAtLogin }, set: { model.setLaunchAtLogin($0) })
-      )
-      .toggleStyle(.checkbox)
-      .font(.callout)
-      if let error = model.loginItemError {
-        Text(error).font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
-      }
-      if let error = model.portError {
-        Text(error).font(.caption).foregroundStyle(.red)
-      } else if model.portText != String(model.port) {
-        Text("Clients must switch to the new port too (e.g. the Chrome extension's server URL).")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-          .fixedSize(horizontal: false, vertical: true)
-      }
-    }
   }
 
   private var stats: some View {
@@ -140,11 +103,58 @@ struct MenuContent: View {
 
   private var settings: some View {
     VStack(alignment: .leading, spacing: 10) {
+      Text("Settings").font(.subheadline.weight(.semibold))
+
+      // Port: other local servers can use the same number, so it can be changed here.
       VStack(alignment: .leading, spacing: 4) {
-        Text("Installed speech models").font(.caption).foregroundStyle(.secondary)
-        Text(model.installedLocales.isEmpty ? "None yet — downloaded on first use." : model.installedLocales.joined(separator: ", "))
-          .font(.caption)
-          .fixedSize(horizontal: false, vertical: true)
+        HStack(spacing: 6) {
+          Text("Port")
+          TextField("8082", text: $model.portText)
+            .textFieldStyle(.roundedBorder)
+            .frame(width: 72)
+            .multilineTextAlignment(.trailing)
+            .onSubmit { model.applyPort() }
+          if model.portText != String(model.port) {
+            Button("Apply") { model.applyPort() }
+              .keyboardShortcut(.defaultAction)
+            Button("Cancel") { model.resetPortText() }
+          }
+          Spacer()
+        }
+        .controlSize(.small)
+        if let error = model.portError {
+          Text(error).font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+        } else {
+          Text("Clients must use the same port (e.g. the Chrome extension's server URL).")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+      }
+
+      // Launch at login
+      VStack(alignment: .leading, spacing: 4) {
+        Toggle(
+          "Start automatically when I log in",
+          isOn: Binding(get: { model.launchAtLogin }, set: { model.setLaunchAtLogin($0) })
+        )
+        .toggleStyle(.checkbox)
+        if let error = model.loginItemError {
+          Text(error).font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+        }
+      }
+
+      // Not a setting, but useful context next to them.
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Downloaded languages").font(.caption).foregroundStyle(.secondary)
+        Text(
+          model.installedLocales.isEmpty
+            ? "None yet. macOS downloads a language the first time it is used."
+            : model.installedLocales.joined(separator: ", ")
+        )
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
       }
       Divider()
     }
