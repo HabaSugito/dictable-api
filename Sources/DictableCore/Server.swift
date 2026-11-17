@@ -1,7 +1,7 @@
 import Foundation
 @preconcurrency import Network
 
-public let appVersion = "1.2.0"
+public let appVersion = "1.2.1"
 
 /// Seconds rounded to milliseconds, so JSON shows 21.54 rather than 21.539999999999999.
 func roundMs(_ seconds: Double) -> Double {

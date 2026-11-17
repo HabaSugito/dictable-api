@@ -659,7 +659,7 @@ ws.onmessage = ({ data }) =&gt; {
           </div>
           <div class="step">
             <h3><span lang="en">Move &amp; open</span><span lang="ja">移動して開く</span></h3>
-            <p><span lang="en">Drag <b>Dictable API.app</b> to Applications and open it. Because the app is not notarized, macOS blocks the first launch: go to <b>System Settings → Privacy &amp; Security</b> and click <b>Open Anyway</b>.</span><span lang="ja"><b>Dictable API.app</b> をアプリケーションフォルダへ移して開きます。公証を受けていないため初回は止められるので、<b>システム設定 → プライバシーとセキュリティ</b> で <b>このまま開く</b> を押します。</span></p>
+            <p><span lang="en">Drag <b>Dictable API.app</b> to Applications and double-click it. It is signed with a Developer ID and notarized by Apple, so it opens without warnings.</span><span lang="ja"><b>Dictable API.app</b> をアプリケーションフォルダへ移して、ダブルクリックで開きます。Developer ID で署名し、Apple の公証を受けているので、警告なしで開けます。</span></p>
           </div>
           <div class="step">
             <h3><span lang="en">Call the API</span><span lang="ja">API を呼ぶ</span></h3>
@@ -696,8 +696,8 @@ ws.onmessage = ({ data }) =&gt; {
             <p><span lang="en">Dictable API detects the clash and offers the next free port in one click. You can also set any port under Settings.</span><span lang="ja">Dictable API が重なりを検知して、空いているポートをワンクリックで提案します。Settings で好きな番号に変えることもできます。</span></p>
           </details>
           <details>
-            <summary><span lang="en">Why does macOS warn me when I open it?</span><span lang="ja">開くときに macOS の警告が出るのはなぜ？</span></summary>
-            <p><span lang="en">The release is ad-hoc signed rather than notarized by Apple. Allow it once in <b>System Settings → Privacy &amp; Security → Open Anyway</b>, or build it yourself from source with <code>./scripts/build-app.sh</code> (apps you build locally are not blocked).</span><span lang="ja">Apple の公証を受けていない、アドホック署名のアプリだからです。一度だけ <b>システム設定 → プライバシーとセキュリティ → このまま開く</b> で許可するか、<code>./scripts/build-app.sh</code> でソースからビルドしてください（自分でビルドしたアプリは止められません）。</span></p>
+            <summary><span lang="en">Is the app safe to open?</span><span lang="ja">アプリは安全に開けますか？</span></summary>
+            <p><span lang="en">Yes. Releases are signed with a Developer ID and notarized by Apple, which scans them for malware, so macOS opens them without warnings. The full source is on GitHub, and you can build it yourself with <code>./scripts/build-app.sh</code>.</span><span lang="ja">はい。配布しているアプリは Developer ID で署名し、マルウェアの検査を含む Apple の公証を受けているので、macOS は警告なしで開きます。ソースコードはすべて GitHub で公開していて、<code>./scripts/build-app.sh</code> で自分でビルドすることもできます。</span></p>
           </details>
         </div>
       </div>

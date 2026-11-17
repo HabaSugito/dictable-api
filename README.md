@@ -64,7 +64,7 @@ recording or live audio → Dictable API (HTTP or WebSocket) → summarizing LLM
 ## Install
 
 Download `DictableAPI-x.y.z.zip` from [Releases](../../releases), unzip, and move **Dictable API.app** to Applications.
-It is ad-hoc signed, not notarized, so macOS blocks the first launch. Open **System Settings → Privacy & Security** and click **Open Anyway** (once). Building from source avoids this.
+It is signed with a Developer ID and notarized by Apple, so it opens with a double-click.
 
 Or build it yourself:
 
@@ -74,6 +74,8 @@ cd dictable-api
 ./scripts/build-app.sh
 open "build/Dictable API.app"
 ```
+
+`build-app.sh` signs with the first *Developer ID Application* certificate in your keychain (or ad-hoc if there is none). To also notarize, store credentials once with `xcrun notarytool store-credentials dictable-notary --team-id <TEAM_ID>`; every build is then notarized and stapled.
 
 A waveform icon appears in the menu bar. Click it to see the endpoints and live activity. **Settings…** at the bottom holds the port and **Start automatically when I log in**. For that option, keep the app in /Applications so the login item keeps pointing at it.
 
