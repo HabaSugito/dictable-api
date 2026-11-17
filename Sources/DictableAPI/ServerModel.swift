@@ -1,6 +1,6 @@
 import AppKit
 import Foundation
-import HarkCore
+import DictableCore
 import Observation
 import ServiceManagement
 
@@ -39,7 +39,7 @@ final class ServerModel {
   private(set) var suggestedPort: UInt16?
   private(set) var loginItemError: String?
 
-  private var server: HarkServer?
+  private var server: SpeechServer?
   private var generation = UUID()
   private static let portKey = "port"
   static let defaultPort: UInt16 = 8082
@@ -53,7 +53,19 @@ final class ServerModel {
   var wsURL: String { "ws://127.0.0.1:\(port)/v1/stream" }
   var isRunning: Bool { status == .running }
 
+  /// The app used to be called "Hark Server" (bundle id io.github.habasugito.HarkServer).
+  /// Carry its saved port over once, so existing clients keep working after the rename.
+  private static func migrateFromHarkServer() {
+    let defaults = UserDefaults.standard
+    guard defaults.object(forKey: portKey) == nil,
+      let old = UserDefaults(suiteName: "io.github.habasugito.HarkServer"),
+      let oldPort = old.object(forKey: portKey) as? Int
+    else { return }
+    defaults.set(oldPort, forKey: portKey)
+  }
+
   init() {
+    Self.migrateFromHarkServer()
     portText = ""
     portText = String(port)
     start()
@@ -75,7 +87,7 @@ final class ServerModel {
     // Events from a previous server (e.g. its late "stopped") must not overwrite the new state.
     let generation = UUID()
     self.generation = generation
-    let server = HarkServer(port: port) { [weak self] event in
+    let server = SpeechServer(port: port) { [weak self] event in
       Task { @MainActor in
         guard let self, self.generation == generation else { return }
         self.handle(event)
@@ -108,7 +120,7 @@ final class ServerModel {
       portError = "Enter a number between 1024 and 65535."
       return
     }
-    // The current port is "in use" by Hark itself, so only check other ports.
+    // The current port is "in use" by this app itself, so only check other ports.
     if value != port || !isRunning {
       guard PortProbe.isAvailable(value) || (value == port && isRunning) else {
         portError = "Port \(value) is in use. Try \(PortProbe.firstAvailable(after: value).map(String.init) ?? "another port")."
@@ -147,7 +159,7 @@ final class ServerModel {
     let status = SMAppService.mainApp.status
     launchAtLogin = status == .enabled
     if enabled && status == .requiresApproval {
-      loginItemError = "Allow Hark Server in System Settings → General → Login Items."
+      loginItemError = "Allow Dictable API in System Settings → General → Login Items."
       SMAppService.openSystemSettingsLoginItems()
     }
   }

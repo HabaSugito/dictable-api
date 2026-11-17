@@ -1,7 +1,7 @@
 import Foundation
 @preconcurrency import Network
 
-public let harkVersion = "1.1.1"
+public let appVersion = "1.2.0"
 
 /// Seconds rounded to milliseconds, so JSON shows 21.54 rather than 21.539999999999999.
 func roundMs(_ seconds: Double) -> Double {
@@ -33,7 +33,7 @@ public enum ServerEvent: Sendable {
 /// - `POST /v1/audio/transcriptions` — OpenAI-compatible file transcription
 /// - `GET  /v1/models`, `/v1/locales`, `/health`
 /// - `ws://…/v1/stream` (or `/`) — live transcription with partial results
-public final class HarkServer: @unchecked Sendable {
+public final class SpeechServer: @unchecked Sendable {
   public let port: UInt16
   let onEvent: @Sendable (ServerEvent) -> Void
   private var listener: NWListener?
@@ -45,7 +45,7 @@ public final class HarkServer: @unchecked Sendable {
     self.onEvent = onEvent
   }
 
-  private let listenerQueue = DispatchQueue(label: "hark.listener")
+  private let listenerQueue = DispatchQueue(label: "dictable.listener")
   private var stopped = false
   private var bindAttempts = 0
   /// macOS keeps a just-closed port in TIME_WAIT for up to ~30 s; retry for a bit longer than that.
@@ -137,7 +137,7 @@ public final class HarkServer: @unchecked Sendable {
   func handle(_ request: HTTPRequest) async -> HTTPResponse {
     switch (request.method, request.path) {
     case ("GET", "/health"), ("GET", "/"):
-      return .json(["status": "ok", "server": "hark", "version": harkVersion])
+      return .json(["status": "ok", "server": "dictable-api", "version": appVersion])
 
     case ("GET", "/v1/models"):
       return .json([
@@ -181,7 +181,7 @@ public final class HarkServer: @unchecked Sendable {
 
     let ext = (file.filename as NSString?)?.pathExtension ?? ""
     let url = FileManager.default.temporaryDirectory
-      .appendingPathComponent("hark-\(UUID().uuidString)")
+      .appendingPathComponent("dictable-\(UUID().uuidString)")
       .appendingPathExtension(ext.isEmpty ? "wav" : ext)
     defer { try? FileManager.default.removeItem(at: url) }
 
@@ -220,8 +220,8 @@ public final class HarkServer: @unchecked Sendable {
 /// One TCP connection: speaks HTTP/1.1 until it is upgraded to a WebSocket.
 final class ClientConnection: @unchecked Sendable {
   let connection: NWConnection
-  weak var server: HarkServer?
-  let queue = DispatchQueue(label: "hark.connection")
+  weak var server: SpeechServer?
+  let queue = DispatchQueue(label: "dictable.connection")
   let id = UUID()
   private var buffer = Data()
   private var isWebSocket = false
@@ -230,7 +230,7 @@ final class ClientConnection: @unchecked Sendable {
   private var assembler = WebSocketMessageAssembler()
   private var transcriber: StreamTranscriber?
 
-  init(connection: NWConnection, server: HarkServer) {
+  init(connection: NWConnection, server: SpeechServer) {
     self.connection = connection
     self.server = server
   }
@@ -342,7 +342,7 @@ final class ClientConnection: @unchecked Sendable {
     connection.send(content: response.serialized(), completion: .idempotent)
     isWebSocket = true
     server?.onEvent(.streamOpened(id: id, client: request.header("origin") ?? request.header("user-agent") ?? "client"))
-    sendJSON(["type": "hello", "server": "hark", "version": harkVersion])
+    sendJSON(["type": "hello", "server": "dictable-api", "version": appVersion])
 
     // Optional shortcut: ws://127.0.0.1:8082/v1/stream?language=ja-JP&sample_rate=16000
     if let language = request.query["language"] {

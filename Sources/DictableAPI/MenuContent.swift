@@ -1,4 +1,4 @@
-import HarkCore
+import DictableCore
 import SwiftUI
 
 struct MenuContent: View {
@@ -27,7 +27,7 @@ struct MenuContent: View {
         .font(.title2)
         .foregroundStyle(.tint)
       VStack(alignment: .leading, spacing: 2) {
-        Text("Hark Server").font(.headline)
+        Text("Dictable API").font(.headline)
         HStack(spacing: 5) {
           Circle().fill(statusColor).frame(width: 7, height: 7)
           Text(statusText).font(.caption).foregroundStyle(.secondary)
@@ -165,7 +165,7 @@ struct MenuContent: View {
     HStack {
       Button(showSettings ? "Hide settings" : "Settings…") { showSettings.toggle() }
       Spacer()
-      Text("v\(harkVersion)").font(.caption2).foregroundStyle(.tertiary)
+      Text("v\(appVersion)").font(.caption2).foregroundStyle(.tertiary)
       Button("Quit") { NSApplication.shared.terminate(nil) }
         .keyboardShortcut("q")
     }

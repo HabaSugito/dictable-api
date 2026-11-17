@@ -4,18 +4,18 @@ import PackageDescription
 let settings: [SwiftSetting] = [.swiftLanguageMode(.v5)]
 
 let package = Package(
-  name: "HarkServer",
+  name: "DictableAPI",
   platforms: [.macOS("26.0")],
   products: [
-    .executable(name: "HarkServer", targets: ["HarkServer"])
+    .executable(name: "DictableAPI", targets: ["DictableAPI"])
   ],
   targets: [
     // Networking (HTTP + WebSocket) and the on-device speech engine. No UI, no dependencies.
-    .target(name: "HarkCore", path: "Sources/HarkCore", swiftSettings: settings),
+    .target(name: "DictableCore", path: "Sources/DictableCore", swiftSettings: settings),
     // The menu bar app.
     .executableTarget(
-      name: "HarkServer", dependencies: ["HarkCore"], path: "Sources/HarkServer", swiftSettings: settings),
+      name: "DictableAPI", dependencies: ["DictableCore"], path: "Sources/DictableAPI", swiftSettings: settings),
     .testTarget(
-      name: "HarkCoreTests", dependencies: ["HarkCore"], path: "Tests/HarkCoreTests", swiftSettings: settings),
+      name: "DictableCoreTests", dependencies: ["DictableCore"], path: "Tests/DictableCoreTests", swiftSettings: settings),
   ]
 )

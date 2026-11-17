@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 
-@testable import HarkCore
+@testable import DictableCore
 
 @Suite("HTTP parser")
 struct HTTPParserTests {
@@ -87,7 +87,7 @@ struct WebSocketTests {
 @Suite("Multipart")
 struct MultipartTests {
   @Test func parsesOpenAIStyleUpload() throws {
-    let boundary = "----hark1234"
+    let boundary = "----dictable1234"
     let audio = Data([0x52, 0x49, 0x46, 0x46, 0x0D, 0x0A, 0x2D, 0x2D, 0x00])  // contains CRLF and "--"
     var body = Data()
     body.append(Data("--\(boundary)\r\nContent-Disposition: form-data; name=\"model\"\r\n\r\nwhisper-1\r\n".utf8))

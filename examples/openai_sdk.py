@@ -1,4 +1,4 @@
-"""Transcribe a file with the official OpenAI Python SDK, pointed at Hark Server.
+"""Transcribe a file with the official OpenAI Python SDK, pointed at Dictable API.
 
     uv run --with openai examples/openai_sdk.py meeting.m4a ja
 """
@@ -13,7 +13,7 @@ language = sys.argv[2] if len(sys.argv) > 2 else "en"
 
 with open(path, "rb") as audio:
     result = client.audio.transcriptions.create(
-        model="apple-on-device",  # any value works; Hark always uses the on-device model
+        model="apple-on-device",  # any value works; Dictable API always uses the on-device model
         file=audio,
         language=language,
         response_format="verbose_json",

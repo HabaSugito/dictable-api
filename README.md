@@ -1,13 +1,13 @@
-# Hark Server
+# Dictable API
 
 **A menu bar app that turns macOS's on-device speech recognition into a local API.**
 OpenAI-compatible file transcription over HTTP, plus live streaming transcription over WebSocket. Free, offline, and private: audio never leaves your Mac.
 
-**Website:** https://hark-server.living-with-tree.workers.dev · [日本語版 README](README.ja.md)
+**Website:** https://dictable-api.living-with-tree.workers.dev
 
 ```
 ┌──────────────┐  POST /v1/audio/transcriptions   ┌───────────────────────────┐
-│ OpenAI SDK,  │ ───────────────────────────────▶ │        Hark Server        │
+│ OpenAI SDK,  │ ───────────────────────────────▶ │        Dictable API        │
 │ curl, apps   │ ◀─────────────── {"text": …}     │   (menu bar, 127.0.0.1)   │
 └──────────────┘                                  │                           │
 ┌──────────────┐  ws://…/v1/stream  PCM ▶        │  SpeechAnalyzer +          │
@@ -19,7 +19,7 @@ OpenAI-compatible file transcription over HTTP, plus live streaming transcriptio
 ## Why
 
 macOS 26 ships a fast, accurate on-device speech model (`SpeechAnalyzer`), but it is only reachable from Swift.
-Hark Server exposes it to every language and tool you already use:
+Dictable API exposes it to every language and tool you already use:
 
 - **Drop-in for the OpenAI transcription API.** Change `base_url` and existing code works unchanged.
 - **Live captions.** Partial results arrive while the person is still speaking (about 1 s behind), and each sentence is finalized as soon as it ends.
@@ -35,27 +35,27 @@ Measured on a MacBook Air (M-series, 16 GB) with a 24-second English clip: the w
 
 ## Install
 
-Download `HarkServer-x.y.z.zip` from [Releases](../../releases), unzip, and move **Hark Server.app** to Applications.
+Download `DictableAPI-x.y.z.zip` from [Releases](../../releases), unzip, and move **Dictable API.app** to Applications.
 It is ad-hoc signed, not notarized, so macOS blocks the first launch. Open **System Settings → Privacy & Security** and click **Open Anyway** (once). Building from source avoids this.
 
 Or build it yourself:
 
 ```bash
-git clone https://github.com/HabaSugito/hark-server.git
-cd hark-server
+git clone https://github.com/HabaSugito/dictable-api.git
+cd dictable-api
 ./scripts/build-app.sh
-open "build/Hark Server.app"
+open "build/Dictable API.app"
 ```
 
 A waveform icon appears in the menu bar. Click it to see the endpoints and live activity. **Settings…** at the bottom holds the port and **Start automatically when I log in**. For that option, keep the app in /Applications so the login item keeps pointing at it.
 
 ### Changing the port
 
-The default port is `8082`. If another app already uses it, Hark Server does not start on it. The menu shows the clash and offers the next free port, which you can accept with **Use port 8083 instead**. You can also open **Settings…** and type any port from 1024 to 65535 in the **Port** field. Remember to point your clients at the new port too.
+The default port is `8082`. If another app already uses it, Dictable API does not start on it. The menu shows the clash and offers the next free port, which you can accept with **Use port 8083 instead**. You can also open **Settings…** and type any port from 1024 to 65535 in the **Port** field. Remember to point your clients at the new port too.
 
-If you switch back to a port that another app has just released, macOS may hold it for up to about 30 seconds. Hark Server shows that it is waiting and starts on its own when the port is free.
+If you switch back to a port that another app has just released, macOS may hold it for up to about 30 seconds. Dictable API shows that it is waiting and starts on its own when the port is free.
 
-From the command line: `defaults write io.github.habasugito.HarkServer port -int 9000`, then restart the app.
+From the command line: `defaults write io.github.habasugito.DictableAPI port -int 9000`, then restart the app.
 
 ## HTTP API (OpenAI-compatible)
 
@@ -101,7 +101,7 @@ Connect to `ws://127.0.0.1:8082/v1/stream`.
 
 | Direction | Message |
 |---|---|
-| server → client | `{"type":"hello","server":"hark","version":"1.0.0"}` |
+| server → client | `{"type":"hello","server":"dictable-api","version":"1.0.0"}` |
 | client → server | `{"type":"start","language":"ja-JP","sample_rate":16000}` |
 | server → client | `{"type":"status","message":"Downloading the speech model…"}` (first use of a language only) |
 | server → client | `{"type":"ready","locale":"ja_JP"}` |
@@ -123,7 +123,7 @@ Shortcut: `ws://127.0.0.1:8082/v1/stream?language=en-US&sample_rate=48000` start
 
 ## Security
 
-The server binds to `127.0.0.1` only. Web pages you visit can still try to reach localhost, so Hark also:
+The server binds to `127.0.0.1` only. Web pages you visit can still try to reach localhost, so Dictable API also:
 
 - requires a loopback `Host` header, which blocks DNS-rebinding attacks;
 - rejects browser requests unless their `Origin` is a browser extension (`chrome-extension://`, `moz-extension://`, `safari-web-extension://`) or a `localhost` page. Clients that send no `Origin` (curl, SDKs, native apps) are allowed.
@@ -131,7 +131,7 @@ The server binds to `127.0.0.1` only. Web pages you visit can still try to reach
 ## Project layout
 
 ```
-Sources/HarkCore/        UI-free library, unit tested
+Sources/DictableCore/        UI-free library, unit tested
   Server.swift           NWListener, routing, per-connection HTTP → WebSocket upgrade
   HTTP.swift             HTTP/1.1 request parser and response writer
   WebSocket.swift        RFC 6455 framing, handshake key, fragment reassembly
@@ -139,15 +139,15 @@ Sources/HarkCore/        UI-free library, unit tested
   SpeechEngine.swift     SpeechAnalyzer streaming + file transcription, model download
   Security.swift         Host / Origin checks
   Subtitles.swift        SRT / VTT output
-Sources/HarkServer/      SwiftUI MenuBarExtra app
-Tests/HarkCoreTests/     Swift Testing suites for the parsers and policies
+Sources/DictableAPI/      SwiftUI MenuBarExtra app
+Tests/DictableCoreTests/     Swift Testing suites for the parsers and policies
 scripts/build-app.sh     Builds and zips the .app bundle
 site/                    Landing page, deployed to Cloudflare with `npx wrangler deploy`
 ```
 
 ```bash
 swift test               # unit tests
-swift run HarkServer     # run without bundling (debug)
+swift run DictableAPI     # run without bundling (debug)
 ```
 
 ## Limitations

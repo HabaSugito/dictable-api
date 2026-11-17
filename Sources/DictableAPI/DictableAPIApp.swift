@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct HarkServerApp: App {
+struct DictableAPIApp: App {
   @State private var model = ServerModel()
 
   var body: some Scene {
@@ -9,7 +9,7 @@ struct HarkServerApp: App {
       MenuContent(model: model)
     } label: {
       Image(systemName: menuIcon)
-        .accessibilityLabel("Hark Server")
+        .accessibilityLabel("Dictable API")
     }
     .menuBarExtraStyle(.window)
   }

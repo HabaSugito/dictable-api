@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hark live captions</title>
+  <title>Dictable live captions</title>
   <style>
     :root { --bg: #fafafa; --fg: #1d1d1f; --muted: #86868b; --accent: #0a84ff; --card: #fff; --border: #e5e5ea; }
     @media (prefers-color-scheme: dark) {
@@ -24,7 +24,7 @@
 </head>
 <body>
 <main>
-  <h1>Hark live captions</h1>
+  <h1>Dictable live captions</h1>
   <p class="hint">Serve this page from localhost (<code>python3 -m http.server -d examples 8000</code>) and open http://localhost:8000/mic.html.</p>
   <div class="controls">
     <select id="lang">
@@ -41,7 +41,7 @@
   <div id="status">Idle</div>
 </main>
 <script>
-// Captures the microphone, converts it to 16 kHz 16-bit mono PCM and streams it to Hark Server.
+// Captures the microphone, converts it to 16 kHz 16-bit mono PCM and streams it to Dictable API.
 const worklet = `
 class Pcm extends AudioWorkletProcessor {
   process([input]) {
@@ -79,7 +79,7 @@ async function start() {
     if (msg.type === 'error') $('status').textContent = 'Error: ' + msg.message;
   };
   ws.onclose = () => ($('status').textContent = 'Disconnected');
-  ws.onerror = () => ($('status').textContent = 'Could not connect. Is Hark Server running?');
+  ws.onerror = () => ($('status').textContent = 'Could not connect. Is Dictable API running?');
 
   node.port.onmessage = ({ data }) => {
     if (ws.readyState !== WebSocket.OPEN) return;

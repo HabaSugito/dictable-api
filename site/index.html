@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hark Server — on-device speech recognition as a local API</title>
+  <title>Dictable API — on-device speech recognition as a local API</title>
   <meta name="description" content="A macOS menu bar app that serves Apple's on-device speech model over an OpenAI-compatible HTTP API and live WebSocket streaming. Free, offline, private." />
-  <meta property="og:title" content="Hark Server" />
+  <meta property="og:title" content="Dictable API" />
   <meta property="og:description" content="On-device speech recognition for macOS, as an OpenAI-compatible local API with live streaming." />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)" />
@@ -277,16 +277,16 @@
 <body>
   <header class="nav">
     <div class="wrap">
-      <a class="brand" href="#top" aria-label="Hark Server home">
+      <a class="brand" href="#top" aria-label="Dictable API home">
         <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="url(#g)"/><defs><linearGradient id="g" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#5b5bf6"/><stop offset="1" stop-color="#12b5a5"/></linearGradient></defs><g stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 13v6"/><path d="M13 9v14"/><path d="M17 11v10"/><path d="M21 14v4"/><path d="M25 12.5v7"/></g></svg>
-        Hark Server
+        Dictable API
       </a>
       <nav class="nav-links" aria-label="Sections">
         <a href="#features"><span lang="en">Features</span><span lang="ja">特長</span></a>
         <a href="#code"><span lang="en">Usage</span><span lang="ja">使い方</span></a>
         <a href="#api">API</a>
         <a href="#install"><span lang="en">Install</span><span lang="ja">インストール</span></a>
-        <a href="https://github.com/HabaSugito/hark-server">GitHub</a>
+        <a href="https://github.com/HabaSugito/dictable-api">GitHub</a>
       </nav>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
@@ -309,20 +309,20 @@
             <span lang="ja" class="h1-ja"><span class="nb">Mac の音声認識を、</span><br /><span class="grad nb">ローカル API に。</span></span>
           </h1>
           <p class="lede" lang="en">
-            Hark Server is a menu bar app that serves Apple's on-device speech model over an
+            Dictable API is a menu bar app that serves Apple's on-device speech model over an
             <b>OpenAI-compatible HTTP API</b> and <b>live WebSocket streaming</b>. Free, offline, and private: audio never leaves your Mac.
           </p>
           <p class="lede" lang="ja">
-            Hark Server は、macOS 標準のオンデバイス音声認識を <b>OpenAI 互換の HTTP API</b> と
+            Dictable API は、macOS 標準のオンデバイス音声認識を <b>OpenAI 互換の HTTP API</b> と
             <b>WebSocket のリアルタイム配信</b> で使えるようにするメニューバーアプリです。無料・オフラインで動き、音声は Mac の外に出ません。
           </p>
           <div class="cta">
-            <a class="btn btn-primary js-download" href="https://github.com/HabaSugito/hark-server/releases/latest">
+            <a class="btn btn-primary js-download" href="https://github.com/HabaSugito/dictable-api/releases/latest">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
               <span lang="en">Download for macOS</span><span lang="ja">macOS 版をダウンロード</span>
               <small class="js-version"></small>
             </a>
-            <a class="btn btn-ghost" href="https://github.com/HabaSugito/hark-server">
+            <a class="btn btn-ghost" href="https://github.com/HabaSugito/dictable-api">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
               <span lang="en">View on GitHub</span><span lang="ja">GitHub で見る</span>
             </a>
@@ -381,8 +381,8 @@
           <span lang="ja">OS の音声認識を、どんなツールからでも。</span>
         </h2>
         <p class="sub">
-          <span lang="en">macOS 26 ships a fast, accurate on-device speech model, but only Swift apps can use it. Hark Server makes it available to Python, JavaScript, curl, browser extensions, and anything else that speaks HTTP.</span>
-          <span lang="ja">macOS 26 には高速で正確なオンデバイス音声認識が入っていますが、使えるのは Swift で作ったアプリだけです。Hark Server を使えば、Python・JavaScript・curl・ブラウザ拡張など、HTTP を話せるものなら何からでも使えます。</span>
+          <span lang="en">macOS 26 ships a fast, accurate on-device speech model, but only Swift apps can use it. Dictable API makes it available to Python, JavaScript, curl, browser extensions, and anything else that speaks HTTP.</span>
+          <span lang="ja">macOS 26 には高速で正確なオンデバイス音声認識が入っていますが、使えるのは Swift で作ったアプリだけです。Dictable API を使えば、Python・JavaScript・curl・ブラウザ拡張など、HTTP を話せるものなら何からでも使えます。</span>
         </p>
         <div class="features">
           <div class="feature">
@@ -441,7 +441,7 @@
                 <span lang="en">English, Japanese, German, French, Spanish, Korean, Chinese and more. macOS downloads each model the first time you use it.</span><span lang="ja">英語・日本語・ドイツ語・フランス語・スペイン語・韓国語・中国語など。各言語のモデルは初回に macOS が自動で入れます。</span></span></li>
             <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>
               <span><b lang="en">Any sample rate.</b><b lang="ja">サンプルレートは自由。</b>
-                <span lang="en">Send 16-bit mono PCM at the rate you have; Hark converts it.</span><span lang="ja">手元の 16bit モノラル PCM をそのまま送れば、Hark が変換します。</span></span></li>
+                <span lang="en">Send 16-bit mono PCM at the rate you have; Dictable API converts it.</span><span lang="ja">手元の 16bit モノラル PCM をそのまま送れば、Dictable API が変換します。</span></span></li>
           </ul>
         </div>
 
@@ -516,7 +516,7 @@ ws.onmessage = ({ data }) =&gt; {
             HTTP · WS
           </div>
           <div class="node center">
-            <h4>Hark Server <span style="color:var(--faint);font-weight:400">· 127.0.0.1:8082</span></h4>
+            <h4>Dictable API <span style="color:var(--faint);font-weight:400">· 127.0.0.1:8082</span></h4>
             <ul>
               <li><span lang="en">HTTP/1.1 + WebSocket (RFC 6455)</span><span lang="ja">HTTP/1.1 と WebSocket（RFC 6455）</span></li>
               <li><span lang="en">multipart upload parsing</span><span lang="ja">アップロードされたファイルの解析</span></li>
@@ -576,11 +576,11 @@ ws.onmessage = ({ data }) =&gt; {
         <div class="steps">
           <div class="step">
             <h3><span lang="en">Download</span><span lang="ja">ダウンロード</span></h3>
-            <p><span lang="en">Get the latest <code>HarkServer.zip</code> from GitHub Releases and unzip it.</span><span lang="ja">GitHub の Releases から最新の zip を入手して展開します。</span></p>
+            <p><span lang="en">Get the latest <code>DictableAPI.zip</code> from GitHub Releases and unzip it.</span><span lang="ja">GitHub の Releases から最新の zip を入手して展開します。</span></p>
           </div>
           <div class="step">
             <h3><span lang="en">Move &amp; open</span><span lang="ja">移動して開く</span></h3>
-            <p><span lang="en">Drag <b>Hark Server.app</b> to Applications and open it. Because the app is not notarized, macOS blocks the first launch: go to <b>System Settings → Privacy &amp; Security</b> and click <b>Open Anyway</b>.</span><span lang="ja"><b>Hark Server.app</b> をアプリケーションフォルダへ移して開きます。公証を受けていないため初回は止められるので、<b>システム設定 → プライバシーとセキュリティ</b> で <b>このまま開く</b> を押します。</span></p>
+            <p><span lang="en">Drag <b>Dictable API.app</b> to Applications and open it. Because the app is not notarized, macOS blocks the first launch: go to <b>System Settings → Privacy &amp; Security</b> and click <b>Open Anyway</b>.</span><span lang="ja"><b>Dictable API.app</b> をアプリケーションフォルダへ移して開きます。公証を受けていないため初回は止められるので、<b>システム設定 → プライバシーとセキュリティ</b> で <b>このまま開く</b> を押します。</span></p>
           </div>
           <div class="step">
             <h3><span lang="en">Call the API</span><span lang="ja">API を呼ぶ</span></h3>
@@ -602,7 +602,7 @@ ws.onmessage = ({ data }) =&gt; {
           </details>
           <details>
             <summary><span lang="en">How does it compare to Whisper?</span><span lang="ja">Whisper と比べてどうですか？</span></summary>
-            <p><span lang="en">Accuracy is similar for everyday speech. Hark is much faster on a laptop, has nothing to download or tune, and streams partial results natively. Whisper can auto-detect the language; Hark needs you to pass one.</span><span lang="ja">日常の会話なら精度は同程度です。ノート PC では Hark の方がずっと速く、モデルの準備や調整も要らず、話している途中の結果も最初から出せます。言語の自動判定は Whisper にしかなく、Hark では言語の指定が必要です。</span></p>
+            <p><span lang="en">Accuracy is similar for everyday speech. Dictable API is much faster on a laptop, has nothing to download or tune, and streams partial results natively. Whisper can auto-detect the language; Dictable API needs you to pass one.</span><span lang="ja">日常の会話なら精度は同程度です。ノート PC では Dictable API の方がずっと速く、モデルの準備や調整も要らず、話している途中の結果も最初から出せます。言語の自動判定は Whisper にしかなく、Dictable API では言語の指定が必要です。</span></p>
           </details>
           <details>
             <summary><span lang="en">Can websites I visit use it?</span><span lang="ja">閲覧中の Web サイトから使われる心配は？</span></summary>
@@ -610,7 +610,7 @@ ws.onmessage = ({ data }) =&gt; {
           </details>
           <details>
             <summary><span lang="en">The port 8082 is already taken.</span><span lang="ja">8082 番ポートが他のアプリと重なります。</span></summary>
-            <p><span lang="en">Hark detects the clash and offers the next free port in one click. You can also set any port under Settings.</span><span lang="ja">Hark が重なりを検知して、空いているポートをワンクリックで提案します。Settings で好きな番号に変えることもできます。</span></p>
+            <p><span lang="en">Dictable API detects the clash and offers the next free port in one click. You can also set any port under Settings.</span><span lang="ja">Dictable API が重なりを検知して、空いているポートをワンクリックで提案します。Settings で好きな番号に変えることもできます。</span></p>
           </details>
           <details>
             <summary><span lang="en">Why does macOS warn me when I open it?</span><span lang="ja">開くときに macOS の警告が出るのはなぜ？</span></summary>
@@ -629,12 +629,12 @@ ws.onmessage = ({ data }) =&gt; {
           <span lang="ja">MIT ライセンスの無料オープンソースです。</span>
         </p>
         <div class="cta">
-          <a class="btn btn-primary js-download" href="https://github.com/HabaSugito/hark-server/releases/latest">
+          <a class="btn btn-primary js-download" href="https://github.com/HabaSugito/dictable-api/releases/latest">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
             <span lang="en">Download for macOS</span><span lang="ja">macOS 版をダウンロード</span>
             <small class="js-version"></small>
           </a>
-          <a class="btn btn-ghost" href="https://github.com/HabaSugito/hark-server#readme">
+          <a class="btn btn-ghost" href="https://github.com/HabaSugito/dictable-api#readme">
             <span lang="en">Read the docs</span><span lang="ja">ドキュメントを読む</span>
           </a>
         </div>
@@ -644,10 +644,10 @@ ws.onmessage = ({ data }) =&gt; {
 
   <footer>
     <div class="wrap">
-      <span>Hark Server · MIT</span>
-      <a href="https://github.com/HabaSugito/hark-server">GitHub</a>
-      <a href="https://github.com/HabaSugito/hark-server/releases">Releases</a>
-      <a href="https://github.com/HabaSugito/hark-server/issues">Issues</a>
+      <span>Dictable API · MIT</span>
+      <a href="https://github.com/HabaSugito/dictable-api">GitHub</a>
+      <a href="https://github.com/HabaSugito/dictable-api/releases">Releases</a>
+      <a href="https://github.com/HabaSugito/dictable-api/issues">Issues</a>
       <span style="margin-left:auto">
         <span lang="en">Not affiliated with Apple or OpenAI.</span>
         <span lang="ja">Apple および OpenAI とは関係ありません。</span>
@@ -665,16 +665,16 @@ ws.onmessage = ({ data }) =&gt; {
         root.lang = lang;
         document.querySelectorAll('[data-set-lang]').forEach((b) =>
           b.setAttribute('aria-pressed', String(b.dataset.setLang === lang)));
-        try { localStorage.setItem('hark-lang', lang); } catch {}
+        try { localStorage.setItem('dictable-lang', lang); } catch {}
         demo.restart();
       }
       let saved = null;
-      try { saved = localStorage.getItem('hark-lang'); } catch {}
+      try { saved = localStorage.getItem('dictable-lang'); } catch {}
       const initial = saved || (navigator.language || '').toLowerCase().startsWith('ja') ? (saved || 'ja') : 'en';
       document.querySelectorAll('[data-set-lang]').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.setLang)));
 
       // ---- latest release (falls back to the releases page link already in the HTML) ----
-      fetch('https://api.github.com/repos/HabaSugito/hark-server/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+      fetch('https://api.github.com/repos/HabaSugito/dictable-api/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
         .then((r) => (r.ok ? r.json() : null))
         .then((rel) => {
           if (!rel) return;

@@ -1,4 +1,4 @@
-// Streams a WAV file to Hark Server in real time and prints partial and final results.
+// Streams a WAV file to Dictable API in real time and prints partial and final results.
 // Node 22+ (built-in WebSocket). Usage: node examples/stream_file.mjs speech.wav ja-JP
 import { readFileSync } from 'node:fs';
 
@@ -69,4 +69,4 @@ ws.onmessage = async (event) => {
       break;
   }
 };
-ws.onerror = () => console.error('Could not connect. Is Hark Server running?');
+ws.onerror = () => console.error('Could not connect. Is Dictable API running?');
